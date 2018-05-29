@@ -15,13 +15,6 @@ buildscript {
     }
 }
 
-android{
-    buildTypes{
-        debug{
-            debuggable true
-        }
-    }
-}
 
 allprojects {
     repositories {
