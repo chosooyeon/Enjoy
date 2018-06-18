@@ -6,6 +6,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.Toast;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -13,7 +17,31 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //데이터 준비
+        ArrayList<Url> data = new ArrayList<>();
+        data.add(new Url("사진","오늘은","https://www.google.com"));
+        data.add(new Url("사진","내일은","https://www.naver.com"));
+        data.add(new Url("사진","모래는","https://www.daum.net"));
+        data.add(new Url("사진","글피는","https://www.swu.ac.kr"));
+        data.add(new Url("사진","어제는","https://www.youtube.com"));
+
+        //어댑터
+        AdapterUrl adapter = new AdapterUrl(data);
+
+        //뷰
+        ListView listView = findViewById(R.id.list_view);
+        listView.setAdapter(adapter);
+
+        //클릭
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Toast.makeText(MainActivity.this,i+" 번째 아이템 선택",Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
 
     public void moveMypage(View view){
         startActivity(new Intent(this, EnjoyMypage.class));
@@ -40,6 +68,16 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void mOnWeb(View view) {
+        Intent intent = new Intent(this, EnjoyWeb.class);
+        startActivity(intent);
+
+    }
+    public void mOnMypage(View view) {
+        Intent intent = new Intent(this, EnjoyMypage.class);
+        startActivity(intent);
+    }
+
     /**@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1) {
@@ -58,4 +96,5 @@ public class MainActivity extends AppCompatActivity {
 
         return true;
     }
+
 }
