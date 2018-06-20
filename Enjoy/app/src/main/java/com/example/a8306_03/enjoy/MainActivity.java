@@ -1,100 +1,117 @@
 package com.example.a8306_03.enjoy;
 
 import android.content.Intent;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String BASE_URL = "https://api.learn2crack.com";
+    private RecyclerView mRecyclerView;
+    private ArrayList<Url> mArrayList;
+    private DataAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolBar);
+        setSupportActionBar(toolbar);
 
-        //데이터 준비
-        ArrayList<Url> data = new ArrayList<>();
-        data.add(new Url("사진","오늘은","https://www.google.com"));
-        data.add(new Url("사진","내일은","https://www.naver.com"));
-        data.add(new Url("사진","모래는","https://www.daum.net"));
-        data.add(new Url("사진","글피는","https://www.swu.ac.kr"));
-        data.add(new Url("사진","어제는","https://www.youtube.com"));
-
-        //어댑터
-        AdapterUrl adapter = new AdapterUrl(data);
-
-        //뷰
-        ListView listView = findViewById(R.id.list_view);
-        listView.setAdapter(adapter);
-
-        //클릭
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        //initViews();
+        //loadJSON();
+    }
+/*
+    private void initViews(){
+        mRecyclerView = (RecyclerView)findViewById(R.id.card_recycler_view);
+        mRecyclerView.setHasFixedSize(true);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(layoutManager);
+    }
+    private void loadJSON(){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        RequestInterface request = retrofit.create(RequestInterface.class);
+        Call<JSONResponse> call = request.getJSON();
+        call.enqueue(new Callback<JSONResponse>() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(MainActivity.this,i+" 번째 아이템 선택",Toast.LENGTH_SHORT).show();
+            public void onResponse(Call<JSONResponse> call, Response<JSONResponse> response) {
+
+                JSONResponse jsonResponse = response.body();
+                mArrayList = new ArrayList<>(Arrays.asList(jsonResponse.getAndroid()));
+                mAdapter = new DataAdapter(mArrayList);
+                mRecyclerView.setAdapter(mAdapter);
+            }
+
+            @Override
+            public void onFailure(Call<JSONResponse> call, Throwable t) {
+                Log.d("Error",t.getMessage());
             }
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
 
-    public void moveMypage(View view){
-        startActivity(new Intent(this, EnjoyMypage.class));
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        MenuItem search = menu.findItem(R.id.Search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(search);
+        search(searchView);
+        return true;
     }
 
-    //버튼
-    /*public void mOnPopupClick(View v) {
-        //데이터 담아서 팝업(액티비티) 호출
-        Intent intent = new Intent(this, EnjoyMemo.class);
-        startActivity(intent);
-        intent.putExtra("data", "Test");
-        startActivityForResult(intent, 1);
-    }*/
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void search(SearchView searchView) {
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                mAdapter.getFilter().filter(newText);
+                return true;
+            }
+        });
+    }
+*/
     public void mOnPlusClick(View v) {
         //메모 클래스 호출
         Intent intent = new Intent(this, EnjoyMemo.class);
         startActivity(intent);
-    }
-
-    public void mOnSearchClick(View v) {
-        //검색 페이지 호출
-        Intent intent = new Intent(this, EnjoySearch.class);
-        startActivity(intent);
-    }
-
-    public void mOnWeb(View view) {
-        Intent intent = new Intent(this, EnjoyWeb.class);
-        startActivity(intent);
-
-    }
-    public void mOnMypage(View view) {
-        Intent intent = new Intent(this, EnjoyMypage.class);
-        startActivity(intent);
-    }
-
-    /**@Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1) {
-            if (resultCode == RESULT_OK) {
-                //데이터 받기
-                String result = data.getStringExtra("result");
-                txtResult.setText(result);
-            }
-        }
-    }*/
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        // 현재 사용중인 menu 에 우리가 작성한 xml 파일을 등록하기
-
-        return true;
     }
 
 }

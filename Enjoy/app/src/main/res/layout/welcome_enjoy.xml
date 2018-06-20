@@ -55,6 +55,7 @@
                 android:id="@+id/et_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textPassword"
                 android:hint="pw를 입력하세요" />
         </android.support.design.widget.TextInputLayout>
 

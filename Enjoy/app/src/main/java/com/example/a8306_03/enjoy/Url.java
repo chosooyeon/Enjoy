@@ -23,12 +23,4 @@ public class Url {
         return url;
     }
 
-    @Override
-    public String toString() {
-        return "Url{" +
-                "picture='" + picture + '\'' +
-                ", title='" + title + '\'' +
-                ", url='" + url + '\'' +
-                '}';
-    }
 }

@@ -146,6 +146,11 @@ public class EnjoyMemo extends MainActivity{
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
+
+    public void mOnSave(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
     /**
     @Override
     public void onBackPressed() {
