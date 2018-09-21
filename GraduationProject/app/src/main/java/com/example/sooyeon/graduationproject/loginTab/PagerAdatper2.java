@@ -10,10 +10,10 @@ import android.support.v4.app.FragmentStatePagerAdapter;
  * @author 조수연
  */
 
-public class LoginPagerAdatper extends FragmentStatePagerAdapter {
+public class PagerAdatper2 extends FragmentStatePagerAdapter {
     //탭의 갯수를 저장하고 있는 멤버변수
     private int mNumOfTabs;
-    public LoginPagerAdatper(FragmentManager fm, int numOfTabs) {
+    public PagerAdatper2(FragmentManager fm, int numOfTabs) {
         super(fm);
         mNumOfTabs = numOfTabs;
     }
@@ -25,15 +25,11 @@ public class LoginPagerAdatper extends FragmentStatePagerAdapter {
 
         switch (position){
             case 0:
-                Tab1Fragment tab1 = new Tab1Fragment();
+                loginScrap tab1 = new loginScrap();
                 return tab1;
             case 1:
-                Tab2Fragment tab2 = new Tab2Fragment();
+                loginInfo tab2 = new loginInfo();
                 return tab2;
-            case 2:
-                Tab3Fragment tab3 = new Tab3Fragment();
-                return tab3;
-
         }
         return null;
     }
