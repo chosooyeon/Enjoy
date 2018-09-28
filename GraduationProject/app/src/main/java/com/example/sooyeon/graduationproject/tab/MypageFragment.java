@@ -48,12 +48,10 @@ public class MypageFragment extends Fragment {
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
 
         //탭 아이콘 추가
-        if(mTabLayout == null) {
-            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-            transaction.replace(R.id.myPage);
-            mTabLayout.getTabAt(0).setIcon(R.drawable.like);
-            mTabLayout.getTabAt(1).setIcon(R.drawable.information);
-        }
+
+        mTabLayout.getTabAt(0).setIcon(R.mipmap.ic_launcher);
+        mTabLayout.getTabAt(1).setIcon(R.mipmap.ic_launcher);
+
         //프래그먼트를 관리할 PagerAdapter를 생성한다.
         PagerAdatper2 pagerAdatper = new PagerAdatper2(getChildFragmentManager(),mTabLayout.getTabCount());
         mPager.setAdapter(pagerAdatper);
