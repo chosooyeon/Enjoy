@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "864358218105",
+    "firebase_url": "https://memowebapp-57b86.firebaseio.com",
+    "project_id": "memowebapp-57b86",
+    "storage_bucket": "memowebapp-57b86.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:864358218105:android:90e8732278f52ef4",
+        "android_client_info": {
+          "package_name": "com.enjoy.firenote"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "864358218105-r0jn1i9vku9g0kccr957nhmsq2nkk8v8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqHkegjk0mDhNklRL9tqWvZxrc894qq0k"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
