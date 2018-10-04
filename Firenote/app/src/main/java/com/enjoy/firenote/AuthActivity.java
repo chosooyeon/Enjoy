@@ -55,7 +55,7 @@ public class AuthActivity extends AppCompatActivity
                 startActivityForResult(intent,100);
             }
         });
-    }
+    }//end onCreate
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

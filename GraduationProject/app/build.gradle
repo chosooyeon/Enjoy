@@ -30,4 +30,9 @@ dependencies {
     compile group: 'com.kakao.sdk', name: 'usermgmt', version: '1.1.31'
     implementation 'com.googlecode.android-query:android-query:0.25.9' //AQuery
     implementation 'de.hdodenhof:circleimageview:1.2.1' // CircleImageView
+    implementation 'com.google.firebase:firebase-core:16.0.1' //firebase
+    implementation 'com.google.firebase:firebase-auth:16.0.2'
+    implementation 'com.google.android.gms:play-services-auth:15.0.1'
+
 }
+apply plugin: 'com.google.gms.google-services'
