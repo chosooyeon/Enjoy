@@ -1,5 +1,6 @@
 package com.example.sooyeon.graduationproject.tab;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -11,14 +12,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.sooyeon.graduationproject.R;
+import com.example.sooyeon.graduationproject.login.MainActivity;
 import com.example.sooyeon.graduationproject.loginTab.PagerAdatper2;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MypageFragment extends Fragment {
     private Button btnJoinEdit;
     private Button btnLogout;
     private Button btnQnA;
+    private TextView txtLoginId;
+    private ImageView imgCamera;
+    private String mPhotoUrl;
+
+    private FirebaseUser mFirebaseUser;
+    private FirebaseAuth mFirebaseAuth;
 
     private TabLayout mTabLayout2;
     private ViewPager mPager2;
@@ -36,11 +49,26 @@ public class MypageFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_mypage, container, false);
 
         //TODO 여기에 View를 찾고 이벤트를 등록하고 등등의 처리를 할 수 있다.
-        //getView().findViewById(R.id.btn1).setOnClickListener();
-        //btnJoinEdit = getView().findViewById(R.id.btnJoinEdit);
-        //btnLogout = getView().findViewById(R.id.btnLogout);
-        //btnQnA = getView().findViewById(R.id.btnQnA);
+        btnJoinEdit = view.findViewById(R.id.btnJoinEdit);
+        btnLogout = view.findViewById(R.id.btnLogout);
+        btnQnA = view.findViewById(R.id.btnQnA);
 
+        //인스턴스를 얻어온다
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
+        if(mFirebaseUser ==null){
+            Intent i = new Intent(getActivity(),MainActivity.class);
+            startActivity(i);
+        }
+
+        txtLoginId = (TextView) view.findViewById(R.id.txtLoginId);
+        txtLoginId.setText("계정: "+mFirebaseUser.getEmail());
+        imgCamera = (ImageView) view.findViewById(R.id.imgCamera);
+        if (mFirebaseUser.getPhotoUrl() != null) {
+            mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
+            Glide.with(this).load(mPhotoUrl).into(imgCamera);
+        }
 
         mTabLayout2 = (TabLayout) view.findViewById(R.id.tabLayout2);
         mPager2 = (ViewPager) view.findViewById(R.id.pager2);
@@ -83,5 +111,6 @@ public class MypageFragment extends Fragment {
         });
 
         return view;
-    }
+    }//end onCreateView
+
 }

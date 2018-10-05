@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity
         txtName = (TextView) headerView.findViewById(R.id.txtName);
         profileUpdate();
         displayMemos();
-    }
+    }//end onCreate
 
     @Override
     public void onBackPressed() {
