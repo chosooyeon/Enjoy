@@ -38,6 +38,8 @@ dependencies {
     //firebase
     implementation 'com.google.android.gms:play-services-auth:15.0.1'
     //firebase
+    //데이터 베이스 추가
+    implementation 'com.google.firebase:firebase-database:16.0.2'
     implementation 'com.github.bumptech.glide:glide:4.3.0'
     //glide 추가
     annotationProcessor 'com.github.bumptech.glide:compiler:4.3.0'

@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="150dp"
-    android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    tools:context=".CustomDialog">
 
     <TextView
         android:id="@+id/textView"
@@ -14,7 +16,7 @@
         android:textSize="18sp" />
 
     <EditText
-        android:id="@+id/edtPwd"
+        android:id="@+id/edtUrl"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -29,7 +31,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btnCheckPwd"
+            android:id="@+id/btnAccept"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"

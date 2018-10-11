@@ -5,12 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".tab.MemoFragement">
-    <ListView
-        android:id="@+id/lstFindMember"
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/lstMemo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="8"
         android:textFilterEnabled="true" />
+
+    <EditText
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:inputType="textMultiLine"
+        android:hint="메모를 입력해주세요"
+        android:gravity="start"
+        android:background="@null"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/btnPlus"
