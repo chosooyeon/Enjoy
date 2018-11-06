@@ -42,7 +42,7 @@ public class CustomDialog {
             public void onClick(View view) {
                 // '확인' 버튼 클릭시 메인 액티비티에서 설정한 main_label에
                 // 커스텀 다이얼로그에서 입력한 메시지를 대입한다.
-                main_label.setText(edtUrl.getText().toString());
+                //main_label.setText(edtUrl.getText().toString());
                 Toast.makeText(context, "등록되었습니다.", Toast.LENGTH_SHORT).show();
 
                 // 커스텀 다이얼로그를 종료한다.

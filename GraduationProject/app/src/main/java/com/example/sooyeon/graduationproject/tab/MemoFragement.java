@@ -18,7 +18,6 @@ import com.example.sooyeon.graduationproject.CustomDialog;
 import com.example.sooyeon.graduationproject.R;
 //import com.example.sooyeon.graduationproject.firebase.FirebaseHelper;
 import com.example.sooyeon.graduationproject.login.MainActivity;
-import com.example.sooyeon.graduationproject.recyclerList.MyAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
