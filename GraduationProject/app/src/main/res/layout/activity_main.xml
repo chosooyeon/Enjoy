@@ -93,11 +93,5 @@
             android:layout_width="300dp"
             android:layout_height="70dp"
             android:layout_gravity="center"/>
-        <com.kakao.usermgmt.LoginButton
-            android:id="@+id/com_kakao_login"
-            android:layout_width="300dp"
-            android:layout_height="70dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"/>
     </LinearLayout>
 </LinearLayout>
