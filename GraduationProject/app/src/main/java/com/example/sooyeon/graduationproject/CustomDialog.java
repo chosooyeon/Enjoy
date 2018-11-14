@@ -65,13 +65,14 @@ public class CustomDialog extends Dialog implements View.OnClickListener{
 
         btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
+
             public void onClick(View view) {
+                url = edtUrl.getText().toString();
                 Memo memo = new Memo(url);
                 String mUrl = memo.title;
                 mUrl = mUrl.replace("/", "");
                 mUrl = mUrl.replace(".", "");
                 mUrl = mUrl.replace(":", "");
-                url = edtUrl.getText().toString();
 
                 if(isUrl(url)){
 //                    if(urlAdapter.hasDuplicate(memo)){

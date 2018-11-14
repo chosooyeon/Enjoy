@@ -98,18 +98,17 @@ public class MemoFragement extends Fragment {
 
         // Read from the database
         mFirebaseDatabase
-                .getReference(mFirebaseUser.getUid())
+                .getReference(mFirebaseUser.getUid()+"/")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         //MemoList.clear();
                         // 클래스 모델이 필요?
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Memo memo = new Memo();
-                            memo.setTitle(dataSnapshot.getValue(Memo.class).getTitle());
+                            //setTitle(dataSnapshot.getValue(Memo.class).getTitle());
 
-                            MemoList.add(memo.title);
-                            UrlAdapter.add(memo.title);
+                            //MemoList.add(memo.title);
+                            //UrlAdapter.add(memo.title);
                         }
                         UrlAdapter.notifyDataSetChanged();
                     }
