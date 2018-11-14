@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">GraduationProject</string>
-    <string name="kakao_key">4edc724d7d0e00287a86d6ae10a75d6f</string>
+    <string name="add">추가</string>
+    <string name="input">http:// or https:// ...</string>
 </resources>

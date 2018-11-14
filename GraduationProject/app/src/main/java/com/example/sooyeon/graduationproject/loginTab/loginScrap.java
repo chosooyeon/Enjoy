@@ -24,7 +24,6 @@ public class loginScrap extends Fragment {
         View view = inflater.inflate(R.layout.activity_login_scrap, container, false);
 
         //TODO 여기에 View를 찾고 이벤트를 등록하고 등등의 처리를 할 수 있다.
-        //getView().findViewById(R.id.btn1).setOnClickListener();
 
         return view;
     }
