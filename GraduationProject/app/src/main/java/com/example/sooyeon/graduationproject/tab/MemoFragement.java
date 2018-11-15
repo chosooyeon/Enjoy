@@ -19,6 +19,7 @@ import com.example.sooyeon.graduationproject.R;
 import com.example.sooyeon.graduationproject.login.MainActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -86,41 +87,49 @@ public class MemoFragement extends Fragment {
                 CustomDialog customDialog = new CustomDialog(getActivity());
                 customDialog.callFunction(editContent);
 
+                if (getArguments() != null) {
+                    Bundle bundle = getArguments();
+
+                    if (!bundle.getString("mUrl").equals(null)) {
+                        String mUrl = bundle.getString("mUrl");
+
+                        // Read from the database
+                        mFirebaseDatabase
+                                .getReference(mFirebaseUser.getUid())
+                                .child(mUrl)
+                                .addValueEventListener(new ValueEventListener() {
+                                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                        //비동기 호출 처리
+                                        Log.e("mainactivity", "key=" + dataSnapshot.getKey() + ", " + dataSnapshot.getValue() + ", s=" + s);
+                                    }
+
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        MemoList.clear();
+                                        // 클래스 모델이 필요?
+                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                            String memo = dataSnapshot.getValue(Memo.class).getTitle();
+
+                                            MemoList.add(memo);
+                                            UrlAdapter.add(memo);
+                                        }
+                                        UrlAdapter.notifyDataSetChanged();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        Log.w("TAG: ", "Failed to read value", databaseError.toException());
+                                    }
+                                });
+
+                        UrlAdapter = new ArrayAdapter<String>(getActivity(), R.layout.list_view, new ArrayList<String>());
+                        lst_url.setAdapter(UrlAdapter);
+                    }
+                }
             }
         });
 
         return view;
     }//onCreate end
 
-    public void onResume() {
-
-        super.onResume();
-
-        // Read from the database
-        mFirebaseDatabase
-                .getReference(mFirebaseUser.getUid()+"/")
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        //MemoList.clear();
-                        // 클래스 모델이 필요?
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            //setTitle(dataSnapshot.getValue(Memo.class).getTitle());
-
-                            //MemoList.add(memo.title);
-                            //UrlAdapter.add(memo.title);
-                        }
-                        UrlAdapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w("TAG: ", "Failed to read value", databaseError.toException());
-                    }
-                });
-
-        UrlAdapter = new ArrayAdapter<String>(getActivity(), R.layout.list_view, new ArrayList<String>());
-        lst_url.setAdapter(UrlAdapter);
-
-    }
 }

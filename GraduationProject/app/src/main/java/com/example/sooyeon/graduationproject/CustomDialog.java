@@ -3,6 +3,10 @@ package com.example.sooyeon.graduationproject;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -14,6 +18,7 @@ import android.widget.Toast;
 import com.example.sooyeon.graduationproject.tab.MemoFragement;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -21,7 +26,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class CustomDialog extends Dialog implements View.OnClickListener{
+import static android.app.Activity.RESULT_OK;
+
+public class CustomDialog extends AppCompatActivity{
     private static FirebaseDatabase mFirebaseDatabase;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
@@ -29,9 +36,9 @@ public class CustomDialog extends Dialog implements View.OnClickListener{
 
     public String url;
     public Context context;
+    public String mUrl;
 
     public CustomDialog(Context context) {
-        super(context);
         this.context = context;
     }
 
@@ -69,10 +76,14 @@ public class CustomDialog extends Dialog implements View.OnClickListener{
             public void onClick(View view) {
                 url = edtUrl.getText().toString();
                 Memo memo = new Memo(url);
-                String mUrl = memo.title;
+                mUrl = memo.title;
                 mUrl = mUrl.replace("/", "");
                 mUrl = mUrl.replace(".", "");
                 mUrl = mUrl.replace(":", "");
+
+                MemoFragement memoFragement = new MemoFragement();
+                //Bundle 객체 생성
+                Bundle bundle = new Bundle();
 
                 if(isUrl(url)){
 //                    if(urlAdapter.hasDuplicate(memo)){
@@ -88,12 +99,14 @@ public class CustomDialog extends Dialog implements View.OnClickListener{
                         initMemo();
                         Toast.makeText(context, "등록되었습니다", Toast.LENGTH_SHORT).show();
 
+                        bundle.putString("mUurl", mUrl);
+                        memoFragement.setArguments(bundle);
+
                         dlg.dismiss();
                     }
                 }else {
                     Toast.makeText(context, "올바른 url형식이 아닙니다", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
 
@@ -108,6 +121,7 @@ public class CustomDialog extends Dialog implements View.OnClickListener{
         });
     }
 
+
     public boolean isUrl(String url) {
         String urlRegex = "^(file|gopher|news|nntp|telnet|https?|ftps?|sftp)://([a-z0-9-]+.)+[a-z0-9]{2,4}.*$";
         return url.matches(urlRegex);
@@ -117,8 +131,4 @@ public class CustomDialog extends Dialog implements View.OnClickListener{
         selectedMemoKey = null;
     }
 
-    @Override
-    public void onClick(View v) {
-
-    }
 }

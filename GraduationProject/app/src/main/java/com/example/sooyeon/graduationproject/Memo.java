@@ -4,6 +4,10 @@ public class Memo {
     public String title;
     public String url;
 
+    public Memo() {
+
+    }
+
     public String getmUrl() {
         return mUrl;
     }
