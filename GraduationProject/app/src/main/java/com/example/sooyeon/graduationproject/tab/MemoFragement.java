@@ -1,6 +1,10 @@
 package com.example.sooyeon.graduationproject.tab;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -8,11 +12,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.sooyeon.graduationproject.CustomDialog;
 import com.example.sooyeon.graduationproject.Memo;
 import com.example.sooyeon.graduationproject.R;
 //import com.example.sooyeon.graduationproject.firebase.FirebaseHelper;
@@ -36,11 +43,13 @@ public class MemoFragement extends Fragment {
     private EditText editContent;
     private static FirebaseDatabase mFirebaseDatabase;
 
-
     private ListView lst_url;
-    List<Object> MemoList = new ArrayList<Object>();
+    //List<Object> MemoList = new ArrayList<Object>();
+    private List<Memo> MemoList;
     private ArrayAdapter<String> UrlAdapter;
     static boolean calledAlready = false;
+
+    private String selectedMemoKey;
 
     static {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -79,57 +88,29 @@ public class MemoFragement extends Fragment {
         }
         FloatingActionButton fabNewMemo = view.findViewById(R.id.btnPlus);
 
+        UrlAdapter = new ArrayAdapter<String>(getActivity(), R.layout.list_view, new ArrayList<String>());
+        lst_url.setAdapter(UrlAdapter);
 
         // 저장을 여기에서
         fabNewMemo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CustomDialog customDialog = new CustomDialog(getActivity());
-                customDialog.callFunction(editContent);
 
-                if (getArguments() != null) {
-                    Bundle bundle = getArguments();
-
-                    if (!bundle.getString("mUrl").equals(null)) {
-                        String mUrl = bundle.getString("mUrl");
-
-                        // Read from the database
-                        mFirebaseDatabase
-                                .getReference(mFirebaseUser.getUid())
-                                .child(mUrl)
-                                .addValueEventListener(new ValueEventListener() {
-                                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                        //비동기 호출 처리
-                                        Log.e("mainactivity", "key=" + dataSnapshot.getKey() + ", " + dataSnapshot.getValue() + ", s=" + s);
-                                    }
-
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        MemoList.clear();
-                                        // 클래스 모델이 필요?
-                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                            String memo = dataSnapshot.getValue(Memo.class).getTitle();
-
-                                            MemoList.add(memo);
-                                            UrlAdapter.add(memo);
-                                        }
-                                        UrlAdapter.notifyDataSetChanged();
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-                                        Log.w("TAG: ", "Failed to read value", databaseError.toException());
-                                    }
-                                });
-
-                        UrlAdapter = new ArrayAdapter<String>(getActivity(), R.layout.list_view, new ArrayList<String>());
-                        lst_url.setAdapter(UrlAdapter);
-                    }
-                }
             }
+
         });
 
         return view;
     }//onCreate end
+
+
+    public boolean isUrl(String url) {
+        String urlRegex = "^(file|gopher|news|nntp|telnet|https?|ftps?|sftp)://([a-z0-9-]+.)+[a-z0-9]{2,4}.*$";
+        return url.matches(urlRegex);
+    }
+
+    private void initMemo(){
+        selectedMemoKey = null;
+    }
 
 }

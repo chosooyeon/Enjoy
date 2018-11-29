@@ -7,16 +7,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UrlAdapter extends BaseAdapter {
 
+    private Context mContext;
+    private LayoutInflater mInflater;
     private ArrayList<Memo> memos;
 
-    public UrlAdapter(){
+    public UrlAdapter(Context context, ArrayList<Memo> memo){
+        mContext = context;
         memos = new ArrayList<>();
+        mInflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public boolean hasDuplicate(Memo memo){
@@ -49,12 +55,16 @@ public class UrlAdapter extends BaseAdapter {
         final Memo memo = memos.get(position);
         final String URL = "url";
 
-        //convertView가 없다면 item을 inflate한다
-        if(convertView ==null){
-            LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.list_view,parent,false);
-            Log.i("Log............" , memo.getTitle());
-        }
+        // 인플레이터로 뷰 가져옴
+        convertView = mInflater.inflate(R.layout.list_view, null);
+
+//        final LostBean bean = mList.get(position);
+//        bean.setSelIdx(position);
+
+        TextView txtTitle = convertView.findViewById(R.id.txt_title);
+        CheckBox ckFavor = convertView.findViewById(R.id.btn_favorite);
+
+        //txtTitle.setText(bean.getTitle());
 
         TextView txt_title = (TextView)convertView.findViewById(R.id.txt_title);
         txt_title.setText(memo.getTitle());
@@ -62,9 +72,9 @@ public class UrlAdapter extends BaseAdapter {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, BrowseActivity.class);
+                Intent intent = new Intent(mContext, BrowseActivity.class);
                 intent.putExtra(URL, memo.getUrl());
-                context.startActivity(intent);
+                mContext.startActivity(intent);
             }
         });
 

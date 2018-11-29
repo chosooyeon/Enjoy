@@ -15,7 +15,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.example.sooyeon.graduationproject.fileprovider"
@@ -26,16 +25,19 @@
                 android:resource="@xml/filepaths" />
         </provider>
 
-        <activity android:name=".login.MainActivity">
+        <activity android:name=".login.MainActivity"/>
+        <activity android:name=".login.JoinEditActivity" />
+        <activity android:name=".login.JoinActivity" />
+        <activity android:name=".tab.TabMainActivity" />
+        <activity android:name=".SplashActivity"
+            android:label="ENJOY"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".login.JoinEditActivity" />
-        <activity android:name=".login.JoinActivity" />
-        <activity android:name=".tab.TabMainActivity" />
     </application>
 
 </manifest>
