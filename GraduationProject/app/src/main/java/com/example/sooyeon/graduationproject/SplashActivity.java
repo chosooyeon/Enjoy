@@ -17,9 +17,6 @@ import com.bumptech.glide.request.target.DrawableImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.sooyeon.graduationproject.login.MainActivity;
-import com.felipecsl.gifimageview.library.GifImageView;
-
-import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,22 +35,9 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         //액티비티의 타이틀을 숨긴다.
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        GifImageView popcorn = (GifImageView) findViewById(R.id.gif_image);
-        try {
-            InputStream inputStream = getAssets().open("pop.gif");
-            byte[] bytes = IOUtils.toByteArray(inputStream);
-            popcorn.setBytes(bytes);
-            popcorn.startAnimation();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         setContentView(R.layout.activity_splash);
-
     }//end onCreate
 
     @Override

@@ -7,24 +7,13 @@
     android:orientation="vertical"
     tools:context=".SplashActivity">
 
-    <com.felipecsl.gifimageview.library.GifImageView
-        android:id="@+id/gif_image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_weight="2"
-        app:srcCompat="@drawable/pop"/>
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:layout_weight="1"
         android:background="@android:color/background_light"
-        android:gravity="top|center"
+        android:gravity="center"
         android:text="ENJOY"
         android:textColor="@android:color/black"
         android:textSize="24sp"

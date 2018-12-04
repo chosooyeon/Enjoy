@@ -1,9 +1,11 @@
 package com.example.sooyeon.graduationproject.login;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +19,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -29,12 +32,9 @@ import com.example.sooyeon.graduationproject.R;
 public class MainActivity extends AppCompatActivity
         implements GoogleApiClient.OnConnectionFailedListener{
 
-    private EditText joinId;
-    private EditText joinPwd;
-    private Button btnjoin;
-    private Button mbtnLogin;
-    private EditText txtId;
-    private EditText txtPwd;
+    private Button btnjoin, mbtnLogin;  //회원가입, 로그인
+    private EditText txtId, txtPwd;
+    private ProgressDialog loadingBar;
 
     private SignInButton mSigninBtn;//google 로그인
     private GoogleApiClient mGoogleApiClient;
@@ -66,16 +66,16 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        joinId = (EditText) findViewById(R.id.joinId);
-        joinPwd = (EditText) findViewById(R.id.joinPwd);
         mbtnLogin = findViewById(R.id.btnLogin);
         Button btnJoin = findViewById(R.id.btnJoin);
         txtId = findViewById(R.id.txtId);
         txtPwd = findViewById(R.id.txtPwd);
+        loadingBar = new ProgressDialog(this);
 
         btnJoin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //회원가입 창으로 이동
                 Intent i = new Intent(MainActivity.this, JoinActivity.class);
                 startActivity(i);
             }
@@ -85,9 +85,40 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, TabMainActivity.class);
-                startActivity(i);
-                //로그인 버튼 이벤트
+                final String email = txtId.getText().toString();
+                String password = txtPwd.getText().toString();
+
+                if(TextUtils.isEmpty(email)){
+                    Toast.makeText(MainActivity.this,"이메일을 입력해주세요",Toast.LENGTH_SHORT).show();
+                }
+                if(TextUtils.isEmpty(password)){
+                    Toast.makeText(MainActivity.this,"비밀번호를 입력해주세요",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    loadingBar.setTitle("로그인중입니다");
+                    loadingBar.setMessage("잠시만 기다려 주세요...");
+                    loadingBar.setCanceledOnTouchOutside(true);
+                    loadingBar.show();
+
+                    mFirebaseAuth.signInWithEmailAndPassword(email,password)
+                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if(task.isSuccessful()){
+                                        Intent i = new Intent(MainActivity.this, TabMainActivity.class);
+                                        startActivity(i);
+                                        Toast.makeText(MainActivity.this,email+"님 환영합니다",Toast.LENGTH_SHORT).show();
+                                        loadingBar.dismiss();
+                                    }
+                                    else{
+
+                                        String message = task.getException().toString();
+                                        Toast.makeText(MainActivity.this,"Error:"+message ,Toast.LENGTH_SHORT).show();
+                                        loadingBar.dismiss();
+                                    }
+                                }
+                            });
+                }
             }
 
 

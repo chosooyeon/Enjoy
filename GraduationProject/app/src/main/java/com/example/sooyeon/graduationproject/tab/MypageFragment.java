@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.sooyeon.graduationproject.R;
@@ -21,6 +22,12 @@ import com.example.sooyeon.graduationproject.login.MainActivity;
 import com.example.sooyeon.graduationproject.loginTab.PagerAdatper2;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 public class MypageFragment extends Fragment {
     private Button btnJoinEdit;
@@ -32,6 +39,7 @@ public class MypageFragment extends Fragment {
 
     private FirebaseUser mFirebaseUser;
     private FirebaseAuth mFirebaseAuth;
+    private DatabaseReference RootRef;
 
     private TabLayout mTabLayout2;
     private ViewPager mPager2;
@@ -56,13 +64,19 @@ public class MypageFragment extends Fragment {
         //인스턴스를 얻어온다
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        RootRef = FirebaseDatabase.getInstance().getReference();
 
         if(mFirebaseUser ==null){
             Intent i = new Intent(getActivity(),MainActivity.class);
             startActivity(i);
         }
 
+        if(mFirebaseAuth.getCurrentUser().getUid()!=null){
+            RetrieveUserInfo();
+        }
+
         txtLoginId = (TextView) view.findViewById(R.id.txtLoginId);
+
         txtLoginId.setText("계정: "+mFirebaseUser.getEmail());
         imgCamera = (ImageView) view.findViewById(R.id.imgCamera);
         if (mFirebaseUser.getPhotoUrl() != null) {
@@ -113,4 +127,29 @@ public class MypageFragment extends Fragment {
         return view;
     }//end onCreateView
 
+    //다시 가져오다
+    private void RetrieveUserInfo() {
+        RootRef.child("Users").child(mFirebaseAuth.getCurrentUser().getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.exists()&&(dataSnapshot.hasChild("name")&&dataSnapshot.hasChild("image"))){
+                            String retrieveUserName = dataSnapshot.child("name").getValue().toString();
+                            String retrieveProfileImage = dataSnapshot.child("image").getValue().toString();
+
+                            txtLoginId.setText(retrieveUserName);
+                            Picasso.get().load(retrieveProfileImage).resize(500,500).into(imgCamera);
+
+                        }else if(dataSnapshot.exists() && dataSnapshot.hasChild("name")){
+                            String retrieveUserName = dataSnapshot.child("name").getValue().toString();
+                            txtLoginId.setText(retrieveUserName);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
 }

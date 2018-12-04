@@ -76,20 +76,9 @@ public class MemoFragement extends Fragment {
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         lst_url = view.findViewById(R.id.lstMemo);
 
-        if (!calledAlready)
-        {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true); // 다른 인스턴스보다 먼저 실행되어야 한다.
-            calledAlready = true;
-        }
 
-        if(mFirebaseUser ==null){
-            Intent i = new Intent(getActivity(),MainActivity.class);
-            startActivity(i);
-        }
         FloatingActionButton fabNewMemo = view.findViewById(R.id.btnPlus);
 
-        UrlAdapter = new ArrayAdapter<String>(getActivity(), R.layout.list_view, new ArrayList<String>());
-        lst_url.setAdapter(UrlAdapter);
 
         // 저장을 여기에서
         fabNewMemo.setOnClickListener(new View.OnClickListener() {
