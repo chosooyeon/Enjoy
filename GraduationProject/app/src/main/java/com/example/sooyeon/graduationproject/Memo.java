@@ -1,28 +1,34 @@
 package com.example.sooyeon.graduationproject;
 
 public class Memo {
-    public String key;
-    public String title;
+    public String img;
+    public String hashTag;
     public String url;
 
-    public Memo(String url){
-        this.title = url.length() > 20 ? url.substring(0, 20)+"...":url;
+    public Memo(){
+
+    }
+
+    public Memo(String img, String hashTag, String url) {
+        this.img = img;
+        this.hashTag = hashTag;
         this.url = url;
     }
 
-    public String getKey() {
-        return key;
+    public String getImg() {
+        return img;
     }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-    public String getTitle() {
-        return title;
+    public void setImg(String img) {
+        this.img = img;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public String getHashTag() {
+        return hashTag;
+    }
+
+    public void setHashTag(String hashTag) {
+        this.hashTag = hashTag;
     }
 
     public String getUrl() {
@@ -33,7 +39,4 @@ public class Memo {
         this.url = url;
     }
 
-    public boolean equals(Object object){
-        return object instanceof Memo && url.equals(((Memo)object).getUrl());
-    }
 }

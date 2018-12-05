@@ -6,12 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".tab.MemoFragement">
 
-    <ListView
-        android:id="@+id/lstMemo"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="8"
-        android:textFilterEnabled="true" />
+        android:layout_height="match_parent"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/btnPlus"

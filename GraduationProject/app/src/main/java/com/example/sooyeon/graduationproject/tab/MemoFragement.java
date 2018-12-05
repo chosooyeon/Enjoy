@@ -1,47 +1,46 @@
 package com.example.sooyeon.graduationproject.tab;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.sooyeon.graduationproject.BrowseActivity;
+import com.example.sooyeon.graduationproject.Memo;
+import com.example.sooyeon.graduationproject.PostActivity;
 import com.example.sooyeon.graduationproject.R;
 //import com.example.sooyeon.graduationproject.firebase.FirebaseHelper;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+import com.example.sooyeon.graduationproject.RegisterActivity;
+import com.example.sooyeon.graduationproject.login.MainActivity;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MemoFragement extends Fragment {
 
     private View ListView;
-    private ListView list_view;
-    private ArrayAdapter<String> arrayAdapter;
-    private ArrayList<String> list_group = new ArrayList<>();
+    RecyclerView mRecyclerView;
+    FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference RootRef;
 
-    private DatabaseReference GroupRef;
-    private String currentGroupName;
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser currentUser;
+    private String currentUserID;
 
     public MemoFragement() {
         // Required empty public constructor
@@ -55,198 +54,87 @@ public class MemoFragement extends Fragment {
         // Inflate the layout for this fragment
         ListView = inflater.inflate(R.layout.fragement_memo, container, false);
 
-        GroupRef = FirebaseDatabase.getInstance().getReference().child("Groups");
+        mRecyclerView = ListView.findViewById(R.id.recyclerView);
+        mRecyclerView.setHasFixedSize(true);
 
-        IntializeFields();
-        RetrieveAndDisplayGroups();
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        currentUser = mFirebaseAuth.getCurrentUser();
+        currentUserID = mFirebaseAuth.getCurrentUser().getUid();
+
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        //경로상에 뭔가 문제가...
+        RootRef = mFirebaseDatabase.getReference().child("Posts").child(currentUserID);
 
         FloatingActionButton fabNewMemo = ListView.findViewById(R.id.btnPlus);
 
         fabNewMemo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                ReqestNewGroup();
-            }
-
-        });
-
-        list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //position값을 받아와서 현재 값을 currentGroupName으로 넘겨준다
-                String currentGroupName = parent.getItemAtPosition(position).toString();
-                Intent listsIntent = new Intent(getContext(), BrowseActivity.class);
-                listsIntent.putExtra("groupName",currentGroupName);
-                startActivity(listsIntent);
+            public void onClick(View view) {
+                //postActivity로 간다.
+                Intent i = new Intent(getActivity(), PostActivity.class);
+                startActivity(i);
             }
         });
-
-        //list를 길게 클릭 했을 때
-        list_view.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(final AdapterView<?> parent, View view, final int position, long id) {
-                AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
-                String[] list = {"삭제","공유"};
-                builder1.setItems(list, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        switch (i){
-                            case 0: //삭제
-                                //position값을 받아온다
-                                currentGroupName = parent.getItemAtPosition(position).toString();
-                                //롱클릭 시 삭제하시겠습니까? 후 firebase에서 삭제
-                                AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.AlertDialog);
-                                builder.setTitle("삭제하시겠습니까?");
-
-                                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        //위치값을 받아와서 firebase에서 삭제
-                                        DeleteGroup(currentGroupName);
-                                    }
-                                });
-                                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                });
-
-                                builder.show();
-                                break;
-                            case 1: //공유
-                                Intent intent = new Intent();
-                                intent.setAction(Intent.ACTION_SEND);
-                                intent.setType("text/plain");
-                                //intent.putExtra(Intent.EXTRA_SUBJECT, "주제");
-                                String url = parent.getItemAtPosition(position).toString();
-                                intent.putExtra(Intent.EXTRA_TEXT, url);
-
-                                Intent chooser = Intent.createChooser(intent, "공유");
-                                startActivity(chooser);
-
-                                break;
-                        }
-                    }
-                });
-
-                AlertDialog dialog = builder1.create();
-                dialog.show();
-
-                return true;
-            }
-        });
-
         return ListView;
     }//onCreate end
 
-    @Override
-    public void onStart() {
+//    @Override
+//    public void onStart() {
+//        FirebaseRecyclerOptions<Memo> options =
+//                new FirebaseRecyclerOptions.Builder<Memo>()
+//                        .setQuery(RootRef, Memo.class)
+//                        .build();
+//
+//        FirebaseRecyclerAdapter<Memo, ListViewHolder> adapter =
+//                new FirebaseRecyclerAdapter<Memo, ListViewHolder>(options) {
+//                    @Override
+//                    protected void onBindViewHolder(@NonNull ListViewHolder holder, int position, @NonNull Memo model) {
+//                        holder.txtUrl.setText(model.getUrl());
+//                        holder.txtHashTag.setText(model.getHashTag());
+//                        Picasso.get().load(model.getImg()).placeholder(R.drawable.ic_launcher_foreground).into(holder.imgView, new Callback() {
+//                            @Override
+//                            public void onSuccess() {
+//
+//                            }
+//
+//                            @Override
+//                            public void onError(Exception e) {
+//                                Toast.makeText(getActivity(),e.getMessage(),Toast.LENGTH_LONG).show();
+//                            }
+//                        });
+//                    }
+//
+//                    @NonNull
+//                    @Override
+//                    public ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+//                        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.user_display, parent,false);
+//                        ListViewHolder viewHolder = new ListViewHolder(view);
+//                        return viewHolder;
+//                    }
+//                };
+//
+//        mRecyclerView.setAdapter(adapter);
+//        if(adapter != null) {
+//            adapter.startListening();
+//        }
+//        super.onStart();
+//    }
 
-        super.onStart();
-    }
+    public static class ListViewHolder extends RecyclerView.ViewHolder{
 
-    private void IntializeFields() {
-        list_view = (ListView) ListView.findViewById(R.id.lstMemo);
-        arrayAdapter = new ArrayAdapter<String>(getContext(),android.R.layout.simple_list_item_1,list_group);
-        list_view.setAdapter(arrayAdapter);
-    }
+        TextView txtUrl;
+        TextView txtHashTag;
+        ImageView imgView;
 
-    private void ReqestNewGroup() {
-        //alertdialog를 style.xml에서 만들어준다.
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),R.style.AlertDialog);
-        builder.setTitle("그룹 이름을 입력하세요");
+        public ListViewHolder(View itemView) {
+            super(itemView);
 
-        //groupNameField가 firebase에 들어간다.
-        final EditText groupNameField = new EditText(getActivity());
-        groupNameField.setHint("eg http://www.naver.com");
-        builder.setView(groupNameField);
-
-        builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String groupName = groupNameField.getText().toString();
-                if(isUrl(groupName)) {
-                    if (TextUtils.isEmpty(groupName)) {
-                        Toast.makeText(getActivity(), "그룹 이름을 적어주세요", Toast.LENGTH_SHORT).show();
-                    } else {
-                        CreateNewGroup(groupName);
-                    }
-                }else {
-                    Toast.makeText(getActivity(), "url형식이 아닙니다.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        builder.show();
-    }
-
-    private void DeleteGroup(final String currentGroupName) {
-        //이 groupName이 url이 되어야 한다.
-        String realgroupName = currentGroupName;
-        realgroupName = realgroupName.replace("/", "");
-        realgroupName = realgroupName.replace(".","");
-        realgroupName = realgroupName.replace(":","");
-        GroupRef.child(realgroupName).removeValue()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            Toast.makeText(getContext(),currentGroupName+"이 삭제되었습니다",Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
-
-
-    //이 groupName이 url이 되어야 한다.
-    public void CreateNewGroup(final String groupName) {
-        String realgroupName = groupName;
-        realgroupName = realgroupName.replace("/", "");
-        realgroupName = realgroupName.replace(".","");
-        realgroupName = realgroupName.replace(":","");
-        GroupRef.child("Groups").child(realgroupName).setValue(groupName)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            Toast.makeText(getActivity(),groupName+"이 생성되었습니다",Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
-
-    //group에 있는 데이터를 list로 가지고 오고 있는 중이다...
-    private void RetrieveAndDisplayGroups() {
-        GroupRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Set<String> set = new HashSet<>();
-                Iterator iterator = dataSnapshot.getChildren().iterator();
-                while (iterator.hasNext()){
-                    set.add((String) ((DataSnapshot)iterator.next()).getValue());
-                }
-                list_group.clear();
-                list_group.addAll(set);
-                arrayAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    public boolean isUrl(String url) {
-        String urlRegex = "^(file|gopher|news|nntp|telnet|https?|ftps?|sftp)://([a-z0-9-]+.)+[a-z0-9]{2,4}.*$";
-        return url.matches(urlRegex);
+            txtUrl = itemView.findViewById(R.id.txtUrl);
+            txtHashTag = itemView.findViewById(R.id.txtHashTag);
+            imgView = itemView.findViewById(R.id.imgView);
+        }
     }
 
 
