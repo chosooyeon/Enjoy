@@ -31,8 +31,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
-import static com.example.sooyeon.graduationproject.tab.MemoFragement.calledAlready;
-
 public class TabMainActivity extends AppCompatActivity {
 
     private TabLayout mTabLayout;

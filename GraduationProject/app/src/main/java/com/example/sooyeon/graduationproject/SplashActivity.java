@@ -12,10 +12,9 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.DrawableImageViewTarget;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.example.sooyeon.graduationproject.login.MainActivity;
 
 import java.io.IOException;
@@ -38,19 +37,23 @@ public class SplashActivity extends AppCompatActivity {
         //액티비티의 타이틀을 숨긴다.
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_splash);
+
+        ImageView rabbit = (ImageView) findViewById(R.id.gifloading);
+        GlideDrawableImageViewTarget gifImage = new GlideDrawableImageViewTarget(rabbit);
+        Glide.with(this).load(R.drawable.popcorn1).into(gifImage);
+
+        startLoading();
+
     }//end onCreate
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //다시 화면에 들어왔을때 예약 걸어주기
-        handler.postDelayed(r, 2000); //2초 뒤에 Runnable객체 수행
+    private void startLoading() {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+            }
+        }, 2000);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        //화면을 벗어나면, handler에 예약해놓은 작업을 취소하자
-        handler.removeCallbacks(r);
-    }
 }

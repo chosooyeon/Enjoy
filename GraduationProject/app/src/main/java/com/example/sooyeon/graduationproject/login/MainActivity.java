@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.sooyeon.graduationproject.RegisterActivity;
+import com.example.sooyeon.graduationproject.SplashActivity;
 import com.example.sooyeon.graduationproject.tab.TabMainActivity;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -44,6 +46,10 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent intent = new Intent(this, SplashActivity.class);
+        startActivity(intent);
+
         mSigninBtn = (SignInButton)findViewById(R.id.sign_in_btn);
         mFirebaseAuth = FirebaseAuth.getInstance();
 
@@ -76,7 +82,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 //회원가입 창으로 이동
-                Intent i = new Intent(MainActivity.this, JoinActivity.class);
+                Intent i = new Intent(MainActivity.this, RegisterActivity.class);
                 startActivity(i);
             }
         });
