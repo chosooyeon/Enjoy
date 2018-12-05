@@ -1,10 +1,12 @@
 package com.example.sooyeon.graduationproject.tab;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -39,8 +41,8 @@ public class MemoFragement extends Fragment {
     private DatabaseReference RootRef;
 
     private FirebaseAuth mFirebaseAuth;
-    private FirebaseUser currentUser;
     private String currentUserID;
+    public String uploadId;
 
     public MemoFragement() {
         // Required empty public constructor
@@ -60,14 +62,30 @@ public class MemoFragement extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         mFirebaseAuth = FirebaseAuth.getInstance();
-        currentUser = mFirebaseAuth.getCurrentUser();
         currentUserID = mFirebaseAuth.getCurrentUser().getUid();
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        //경로상에 뭔가 문제가...
-        RootRef = mFirebaseDatabase.getReference().child("Posts").child(currentUserID);
+        RootRef = mFirebaseDatabase.getReference().child("Posts");
+        uploadId = RootRef.push().getKey();
 
         FloatingActionButton fabNewMemo = ListView.findViewById(R.id.btnPlus);
+        SwipeRefreshLayout mSwipeRefreshLayout = ListView.findViewById(R.id.swipe_layout);
+
+        mSwipeRefreshLayout.setOnRefreshListener((SwipeRefreshLayout.OnRefreshListener) getActivity());
+
+        mSwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                            }
+                        },3000);
+                    }
+                }
+        );
 
         fabNewMemo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,47 +98,47 @@ public class MemoFragement extends Fragment {
         return ListView;
     }//onCreate end
 
-//    @Override
-//    public void onStart() {
-//        FirebaseRecyclerOptions<Memo> options =
-//                new FirebaseRecyclerOptions.Builder<Memo>()
-//                        .setQuery(RootRef, Memo.class)
-//                        .build();
-//
-//        FirebaseRecyclerAdapter<Memo, ListViewHolder> adapter =
-//                new FirebaseRecyclerAdapter<Memo, ListViewHolder>(options) {
-//                    @Override
-//                    protected void onBindViewHolder(@NonNull ListViewHolder holder, int position, @NonNull Memo model) {
-//                        holder.txtUrl.setText(model.getUrl());
-//                        holder.txtHashTag.setText(model.getHashTag());
-//                        Picasso.get().load(model.getImg()).placeholder(R.drawable.ic_launcher_foreground).into(holder.imgView, new Callback() {
-//                            @Override
-//                            public void onSuccess() {
-//
-//                            }
-//
-//                            @Override
-//                            public void onError(Exception e) {
-//                                Toast.makeText(getActivity(),e.getMessage(),Toast.LENGTH_LONG).show();
-//                            }
-//                        });
-//                    }
-//
-//                    @NonNull
-//                    @Override
-//                    public ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//                        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.user_display, parent,false);
-//                        ListViewHolder viewHolder = new ListViewHolder(view);
-//                        return viewHolder;
-//                    }
-//                };
-//
-//        mRecyclerView.setAdapter(adapter);
-//        if(adapter != null) {
-//            adapter.startListening();
-//        }
-//        super.onStart();
-//    }
+    @Override
+    public void onStart() {
+        FirebaseRecyclerOptions<Memo> options =
+                new FirebaseRecyclerOptions.Builder<Memo>()
+                        .setQuery(RootRef.child(currentUserID).orderByChild(uploadId), Memo.class)
+                        .build();
+
+        FirebaseRecyclerAdapter<Memo, ListViewHolder> adapter =
+                new FirebaseRecyclerAdapter<Memo, ListViewHolder>(options) {
+                    @Override
+                    protected void onBindViewHolder(@NonNull ListViewHolder holder, int position, @NonNull Memo model) {
+                        holder.txtUrl.setText(model.getUrl());
+                        holder.txtHashTag.setText(model.getHashTag());
+                        Picasso.get().load(model.getImg()).placeholder(R.drawable.ic_launcher_foreground).into(holder.imgView, new Callback() {
+                            @Override
+                            public void onSuccess() {
+
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                Toast.makeText(getActivity(),e.getMessage(),Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+
+                    @NonNull
+                    @Override
+                    public ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_view, parent,false);
+                        ListViewHolder viewHolder = new ListViewHolder(view);
+                        return viewHolder;
+                    }
+                };
+
+        mRecyclerView.setAdapter(adapter);
+        if(adapter != null) {
+            adapter.startListening();
+        }
+        super.onStart();
+    }
 
     public static class ListViewHolder extends RecyclerView.ViewHolder{
 

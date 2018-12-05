@@ -13,8 +13,7 @@
         <ImageView
             android:id="@+id/imgView"
             android:layout_width="93dp"
-            android:layout_height="100dp"
-            android:background="@drawable/pop"/>
+            android:layout_height="100dp"/>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
