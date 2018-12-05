@@ -5,11 +5,14 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
+import android.os.Bundle;;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -19,9 +22,6 @@ import android.widget.Toast;
 import com.example.sooyeon.graduationproject.Memo;
 import com.example.sooyeon.graduationproject.PostActivity;
 import com.example.sooyeon.graduationproject.R;
-//import com.example.sooyeon.graduationproject.firebase.FirebaseHelper;
-import com.example.sooyeon.graduationproject.RegisterActivity;
-import com.example.sooyeon.graduationproject.login.MainActivity;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,9 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
-public class MemoFragement extends Fragment {
+public class MemoFragement extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
     private View ListView;
     RecyclerView mRecyclerView;
@@ -43,6 +41,9 @@ public class MemoFragement extends Fragment {
     private FirebaseAuth mFirebaseAuth;
     private String currentUserID;
     public String uploadId;
+    SwipeRefreshLayout mSwipeRefreshLayout;
+
+    public OnItemClickListener onItemClickListener;
 
     public MemoFragement() {
         // Required empty public constructor
@@ -69,23 +70,9 @@ public class MemoFragement extends Fragment {
         uploadId = RootRef.push().getKey();
 
         FloatingActionButton fabNewMemo = ListView.findViewById(R.id.btnPlus);
-        SwipeRefreshLayout mSwipeRefreshLayout = ListView.findViewById(R.id.swipe_layout);
+        mSwipeRefreshLayout = ListView.findViewById(R.id.swipe_layout);
 
-        mSwipeRefreshLayout.setOnRefreshListener((SwipeRefreshLayout.OnRefreshListener) getActivity());
-
-        mSwipeRefreshLayout.setOnRefreshListener(
-                new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-
-                            }
-                        },3000);
-                    }
-                }
-        );
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
         fabNewMemo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,10 +124,23 @@ public class MemoFragement extends Fragment {
         if(adapter != null) {
             adapter.startListening();
         }
+
         super.onStart();
     }
 
-    public static class ListViewHolder extends RecyclerView.ViewHolder{
+    @Override
+    public void onRefresh() {
+        mSwipeRefreshLayout.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        },500);
+
+    }
+
+    public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
+            , View.OnCreateContextMenuListener,MenuItem.OnMenuItemClickListener{
 
         TextView txtUrl;
         TextView txtHashTag;
@@ -152,9 +152,57 @@ public class MemoFragement extends Fragment {
             txtUrl = itemView.findViewById(R.id.txtUrl);
             txtHashTag = itemView.findViewById(R.id.txtHashTag);
             imgView = itemView.findViewById(R.id.imgView);
+
+            itemView.setOnClickListener(this);
+            itemView.setOnCreateContextMenuListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if(onItemClickListener != null){
+                int position = getAdapterPosition();
+                if(position != RecyclerView.NO_POSITION){
+                    onItemClickListener.onItemClick(position);
+                }
+            }
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+            MenuItem doWhatEver = contextMenu.add(Menu.NONE,1,1,"WhatEver");
+            MenuItem delete = contextMenu.add(Menu.NONE,2,2,"Delete");
+
+            doWhatEver.setOnMenuItemClickListener(this);
+            delete.setOnMenuItemClickListener(this);
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            if(onItemClickListener != null){
+                int position = getAdapterPosition();
+                if(position != RecyclerView.NO_POSITION){
+                    switch (menuItem.getItemId()){
+                        case 1:
+                            onItemClickListener.onWhatEverClick(position);
+                            return true;
+                        case 2:
+                            onItemClickListener.onDeleteClick(position);
+                            return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 
+    public interface OnItemClickListener{
+        void onItemClick(int position);
+        void onWhatEverClick(int position);
+        void onDeleteClick(int position);
 
+    }
+    public void setOnItemClickListener(OnItemClickListener listener){
+        onItemClickListener = listener;
+    }
 
 }

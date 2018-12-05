@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(this, SplashActivity.class);
         startActivity(intent);
 
-        mSigninBtn = (SignInButton)findViewById(R.id.sign_in_btn);
+        //mSigninBtn = (SignInButton)findViewById(R.id.sign_in_btn);
         mFirebaseAuth = FirebaseAuth.getInstance();
 
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -64,13 +64,13 @@ public class MainActivity extends AppCompatActivity
                 .addApi(Auth.GOOGLE_SIGN_IN_API,googleSignInOptions)
                 .build();
 
-        mSigninBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-                startActivityForResult(intent,100);
-            }
-        });
+//        mSigninBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+//                startActivityForResult(intent,100);
+//            }
+//        });
 
         mbtnLogin = findViewById(R.id.btnLogin);
         Button btnJoin = findViewById(R.id.btnJoin);
